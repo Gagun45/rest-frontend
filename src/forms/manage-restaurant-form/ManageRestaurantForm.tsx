@@ -14,31 +14,48 @@ import { useEffect } from "react";
 
 const formSchema = z
   .object({
-    restaurantName: z.string({ required_error: "Restaurant name is required" }),
-    city: z.string({ required_error: "Cirt is required" }),
-    country: z.string({ required_error: "Country is required" }),
-    deliveryPrice: z.coerce.number({
-      required_error: "Delivery price is required",
-      invalid_type_error: "Must be a valid number",
-    }),
-    estimatedDeliveryTime: z.coerce.number({
-      required_error: "Estimated delivery is required",
-      invalid_type_error: "Must be a valid number",
-    }),
+    restaurantName: z
+      .string({ required_error: "Restaurant name is required" })
+      .min(1, "Restaurant name is required"),
+
+    city: z
+      .string({ required_error: "City is required" })
+      .min(1, "City is required"),
+
+    country: z
+      .string({ required_error: "Country is required" })
+      .min(1, "Country is required"),
+
+    deliveryPrice: z.coerce
+      .number({
+        invalid_type_error: "Must be a valid number",
+      })
+      .min(1, "Price is required"),
+
+    estimatedDeliveryTime: z.coerce
+      .number({
+        invalid_type_error: "Must be a valid number",
+      })
+      .min(1, "Time is required"),
+
     cuisines: z.array(z.string()).nonempty({
       message: "Please select at least one item",
     }),
+
     menuItems: z.array(
       z.object({
-        name: z.string().min(1, "Name is required"),
-        price: z.coerce.number().min(1, "Price is required"),
+        name: z.string().min(1, "is required"),
+        price: z.coerce
+          .number({ invalid_type_error: "Must be a valid number" })
+          .min(1, "is required"),
       })
     ),
+
     imageUrl: z.string().optional(),
-    imageFile: z.instanceof(File, { message: "Image is required" }).optional(),
+    imageFile: z.instanceof(File).optional(),
   })
   .refine((data) => data.imageUrl || data.imageFile, {
-    message: "Either image URL or image File must be provided",
+    message: "Image must be provided",
     path: ["imageFile"],
   });
 
